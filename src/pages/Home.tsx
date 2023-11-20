@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Input from "../components/Input";
 import axios, { AxiosError } from "axios";
+import SpinningLoader from "../components/SpinningLoader";
 
 interface youtubeData {
   ID: string;
@@ -43,11 +44,11 @@ const Home: React.FC = () => {
   useEffect(() => {
     if (query !== "") {
       getTableData();
-      console.log(response);
+      console.log();
     }
   }, [query]);
   useEffect(() => {
-    console.log(response);
+    console.log("Object:", Object.keys(response.data));
   }, [response]);
 
   console.log(query);
@@ -83,51 +84,100 @@ const Home: React.FC = () => {
             <div className="overflow-x-auto">
               {/* <TableRows tableData={response} /> */}
               {isLoading ? (
-                <div>Loading...</div>
+                <SpinningLoader />
               ) : response.Table === "youtube" ? (
                 <table className="min-w-full bg-white">
                   <thead>
                     <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-                      <th className="py-3 px-6 text-left">ID</th>
-                      <th className="py-3 px-6 text-left">Track</th>
-                      <th className="py-3 px-6 text-left">Youtube URL</th>
-                      <th className="py-3 px-6 text-left">Title</th>
-                      <th className="py-3 px-6 text-left">Channel</th>
-                      <th className="py-3 px-6 text-left">Views</th>
-                      <th className="py-3 px-6 text-left">Likes</th>
-                      <th className="py-3 px-6 text-left">Comments</th>
-                      <th className="py-3 px-6 text-left">Licensed</th>
-                      <th className="py-3 px-6 text-left">Official video</th>
-                      {/* Add more headers as needed */}
+                      {Object.keys(response.data[0]).map((data: any) => (
+                        <th className="py-3 px-6 text-left">{data}</th>
+                      ))}
                     </tr>
+                    <tr></tr>
                   </thead>
                   <tbody>
                     {response.data?.length >= 0 ? (
-                      response.data?.map((data: any) => (
+                      response.data.map((data) => (
                         <tr className="border-b border-gray-200 hover:bg-gray-100">
-                          <td className="py-3 px-6 text-left whitespace-nowrap">
-                            {data.ID}
-                          </td>
-                          <td className="py-3 px-6 text-left">{data.Track}</td>
-                          <td className="py-3 px-6 text-left">
-                            {data.Url_youtube}
-                          </td>
-                          <td className="py-3 px-6 text-left">{data.Title}</td>
-                          <td className="py-3 px-6 text-left">
-                            {data.Channel}
-                          </td>
-                          <td className="py-3 px-6 text-left">{data.Views}</td>
-                          <td className="py-3 px-6 text-left">{data.Likes}</td>
-                          <td className="py-3 px-6 text-left">
-                            {data.Comments}
-                          </td>
-                          <td className="py-3 px-6 text-left">
-                            {data.Licensed}
-                          </td>
-                          <td className="py-3 px-6 text-left">
-                            {data.official_video}
-                          </td>
+                          {Object.values(data).map((res) => (
+                            <td className="py-3 px-6 text-left">{res}</td>
+                          ))}
                         </tr>
+                        // <tr
+                        //   className="border-b border-gray-200 hover:bg-gray-100"
+                        //   key={data.ID}
+                        // >
+                        //   {data.ID ? (
+                        //     <td className="py-3 px-6 text-left whitespace-nowrap">
+                        //       {data.ID || ""}
+                        //     </td>
+                        //   ) : (
+                        //     <div></div>
+                        //   )}
+                        //   {data.Track ? (
+                        //     <td className="py-3 px-6 text-left">
+                        //       {data.Track || ""}
+                        //     </td>
+                        //   ) : (
+                        //     <div></div>
+                        //   )}
+                        //   {data.Url_youtube ? (
+                        //     <td className="py-3 px-6 text-left">
+                        //       {data.Url_youtube || ""}
+                        //     </td>
+                        //   ) : (
+                        //     <div></div>
+                        //   )}
+                        //   {data.Title ? (
+                        //     <td className="py-3 px-6 text-left">
+                        //       {data.Title || ""}
+                        //     </td>
+                        //   ) : (
+                        //     <div></div>
+                        //   )}
+                        //   {data.Channel ? (
+                        //     <td className="py-3 px-6 text-left">
+                        //       {data.Channel || ""}
+                        //     </td>
+                        //   ) : (
+                        //     <div></div>
+                        //   )}
+                        //   {data.Views ? (
+                        //     <td className="py-3 px-6 text-left">
+                        //       {data.Views || ""}
+                        //     </td>
+                        //   ) : (
+                        //     <div></div>
+                        //   )}
+                        //   {data.Likes ? (
+                        //     <td className="py-3 px-6 text-left">
+                        //       {data.Likes || ""}
+                        //     </td>
+                        //   ) : (
+                        //     <div></div>
+                        //   )}
+                        //   {data.Comments ? (
+                        //     <td className="py-3 px-6 text-left">
+                        //       {data.Comments || ""}
+                        //     </td>
+                        //   ) : (
+                        //     <div></div>
+                        //   )}
+                        //   {data.Licensed ? (
+                        //     <td className="py-3 px-6 text-left">
+                        //       {data.Licensed || ""}
+                        //     </td>
+                        //   ) : (
+                        //     <div></div>
+                        //   )}
+                        //   {data.official_video ? (
+                        //     <td className="py-3 px-6 text-left">
+                        //       {data.official_video || ""}
+                        //     </td>
+                        //   ) : (
+                        //     <div></div>
+                        //   )}
+                        // </tr>
                       ))
                     ) : (
                       <div>Data not found</div>
@@ -137,8 +187,11 @@ const Home: React.FC = () => {
               ) : response.Table === "spotify" ? (
                 <table className="min-w-full bg-white">
                   <thead>
+                    {Object.keys(response.data[0]).map((data: any) => (
+                      <th className="py-3 px-6 text-left">{data}</th>
+                    ))}
                     <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-                      <th className="py-3 px-6 text-left">ID</th>
+                      {/* <th className="py-3 px-6 text-left">ID</th>
                       <th className="py-3 px-6 text-left">Artist</th>
                       <th className="py-3 px-6 text-left">Artist URL</th>
                       <th className="py-3 px-6 text-left">Track</th>
@@ -146,15 +199,18 @@ const Home: React.FC = () => {
                       <th className="py-3 px-6 text-left">Album_type</th>
                       <th className="py-3 px-6 text-left">Song URI</th>
                       <th className="py-3 px-6 text-left">Duration</th>
-                      <th className="py-3 px-6 text-left">Number of Streams</th>
+                      <th className="py-3 px-6 text-left">Number of Streams</th> */}
                       {/* Add more headers as needed */}
                     </tr>
                   </thead>
                   <tbody>
                     {response.data?.length >= 0 ? (
-                      response.data?.map((data: any) => (
+                      response.data.map((data: any) => (
                         <tr className="border-b border-gray-200 hover:bg-gray-100">
-                          <td className="py-3 px-6 text-left whitespace-nowrap">
+                          {Object.values(data).map((res: any) => (
+                            <td className="py-3 px-6 text-left">{res}</td>
+                          ))}
+                          {/* <td className="py-3 px-6 text-left whitespace-nowrap">
                             {data.ID}
                           </td>
                           <td className="py-3 px-6 text-left">{data.Artist}</td>
@@ -174,7 +230,7 @@ const Home: React.FC = () => {
                           </td>
                           <td className="py-3 px-6 text-left">
                             {data.No_of_Streams}
-                          </td>
+                          </td> */}
                         </tr>
                       ))
                     ) : (
