@@ -36,28 +36,27 @@ const Home: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const [response, setResponse] = useState<data>({ Table: "", data: [] });
   const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const handleButtonClick = (value: string) => {
     console.log(value);
-
+    setPage(1);
     setQuery(value);
   };
   useEffect(() => {
     if (query !== "") {
       getTableData();
-      console.log();
     }
-  }, [query]);
-  useEffect(() => {
-    console.log("Object:", Object.keys(response.data));
-  }, [response]);
+  }, [query, page, pageSize]);
 
-  console.log(query);
   const getTableData = async () => {
     try {
       setIsLoading(true);
 
       const res: any = await axios.post("/data/query", {
-        query: query,
+        query,
+        page,
+        pageSize,
       });
       console.log("res:", res.data);
       setResponse(res.data);
@@ -68,7 +67,13 @@ const Home: React.FC = () => {
       setIsLoading(false);
     }
   };
+  const handleNextPage = () => {
+    setPage((prevPage) => prevPage + 1); // Increment page number for next page
+  };
 
+  const handlePrevPage = () => {
+    setPage((prevPage) => (prevPage > 1 ? prevPage - 1 : 1)); // Decrement page number for previous page
+  };
   return (
     <div className="bg-gray-100">
       <div className="input shadow-md fixed w-screen bg-white">
@@ -76,10 +81,12 @@ const Home: React.FC = () => {
       </div>
 
       <div className="">
-        <div className="flex pt-40 justify-center min-h-screen">
+        <div className="flex flex-col pt-40 items-center min-h-screen">
           <div className="w-full sm:max-w-3xl bg-white shadow-md rounded my-6">
             <div className="px-6 py-4 border-b">
-              <h2 className="font-semibold text-2xl">Table Name</h2>
+              <h2 className="font-semibold text-2xl flex justify-center">
+                {response.Table.toLocaleUpperCase()}
+              </h2>
             </div>
             <div className="overflow-x-auto">
               {/* <TableRows tableData={response} /> */}
@@ -210,27 +217,6 @@ const Home: React.FC = () => {
                           {Object.values(data).map((res: any) => (
                             <td className="py-3 px-6 text-left">{res}</td>
                           ))}
-                          {/* <td className="py-3 px-6 text-left whitespace-nowrap">
-                            {data.ID}
-                          </td>
-                          <td className="py-3 px-6 text-left">{data.Artist}</td>
-                          <td className="py-3 px-6 text-left">
-                            {data.Url_Artist}
-                          </td>
-                          <td className="py-3 px-6 text-left">{data.Track}</td>
-                          <td className="py-3 px-6 text-left">{data.Album}</td>
-                          <td className="py-3 px-6 text-left">
-                            {data.Album_type}
-                          </td>
-                          <td className="py-3 px-6 text-left">
-                            {data.Uri_song}
-                          </td>
-                          <td className="py-3 px-6 text-left">
-                            {data.Duration_ms}
-                          </td>
-                          <td className="py-3 px-6 text-left">
-                            {data.No_of_Streams}
-                          </td> */}
                         </tr>
                       ))
                     ) : (
@@ -239,9 +225,25 @@ const Home: React.FC = () => {
                   </tbody>
                 </table>
               ) : (
-                <div>data not found</div>
+                <div className="pl-10 pt-4 text-red-500">NO DATA FOUND</div>
               )}
             </div>
+          </div>
+          <div className="flex justify-center pt-4 bg relative w-full bottom-5 ">
+            <button
+              onClick={handlePrevPage}
+              className="px-2 py-1 bg-gray-500 w-20 text-white rounded"
+              disabled={page === 1}
+            >
+              Previous
+            </button>
+            <span className="px-2 py-1">{page}</span>
+            <button
+              onClick={handleNextPage}
+              className="px-2 py-1 bg-gray-500 w-20 text-white rounded"
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>
